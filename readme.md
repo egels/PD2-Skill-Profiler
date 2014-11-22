@@ -57,7 +57,7 @@ Known bugs and missing features
 Special thanks
 ==============
 
-- **gir489** for his Payday 2 source code repository;
+- **gir489** for his Payday 2 source code [repository](https://bitbucket.org/gir489/payday-2-lua-repo/src);
 - **stumpy3toes** for his CustomMenu class. You can find it [here](http://www.unknowncheats.me/forum/payday-2/122033-custom-mod-menu-class-using-gui-drawing.html);
 - **MS HACK** and **notwa** for finding a simple way to add new options to the main menu. Their posts can be found
   [here](http://www.unknowncheats.me/forum/payday-2/121738-menumanager-its-possible-2.html).
