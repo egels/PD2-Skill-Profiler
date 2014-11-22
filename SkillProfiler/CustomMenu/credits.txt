@@ -1,0 +1,6 @@
+This custom menu class was created by stumpy3toes. You can find the original
+thread at the following link:
+http://www.unknowncheats.me/forum/payday-2/122033-custom-mod-menu-class-using-gui-drawing.html
+
+The main menu button was possible thanks to MS HACK and notwa at the following link:
+http://www.unknowncheats.me/forum/payday-2/121738-menumanager-its-possible-2.html

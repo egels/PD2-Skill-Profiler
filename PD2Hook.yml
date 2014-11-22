@@ -1,0 +1,21 @@
+Config:
+  OutputMode: 1
+  OutputFile: LUAmods.log
+  PrintOffsets: false
+  ExtraCols: 10
+  ExtraRows: 10
+
+PersistScripts:
+  # Skill Profiler
+  - [CustomMenuClass, SkillProfiler/CustomMenu/CustomMenuClass.lua]
+  - [Utils, SkillProfiler/CustomMenu/Utils.lua]
+  - [SkillProfiler, SkillProfiler/SkillProfiler.lua]
+  - [SkillMenu, SkillProfiler/SkillMenu.lua]
+
+PostRequireScripts:
+  # Skill Profiler
+  - [lib/managers/menumanager, SkillProfiler/SPmenumanager.lua]
+  - [lib/managers/localizationmanager, SkillProfiler/SPlocalizationmanager.lua]
+
+# CloseScripts:
+#   - LUA\statesaver.lua
