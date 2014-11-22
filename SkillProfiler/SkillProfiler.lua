@@ -134,6 +134,7 @@ if not SkillProfiler then
     if not profile then
       return false
     end
+    profile = profile:gsub('.+\/', '')
     local tree_begin = 1
     local tree_end = string.find(profile, ':', tree_begin)
     if not tree_end then
