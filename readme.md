@@ -52,7 +52,8 @@ Known bugs and missing features
 ===============================
 
 - Skill dependencies aren't check properly. This means a profile that has Joker but
-  not Dominator, for example, will pass the safety test but fail to be assigned properly.
+  not Dominator, for example, will pass the safety test but fail to be assigned properly;
+- Cash/skill values on the main menu don't update after changing profile;
 - At the moment, there is no way to ask the users for input (e.g. for the profile name).
 
 Special thanks
