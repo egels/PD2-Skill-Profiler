@@ -1,7 +1,7 @@
 Introduction
 ============
 PD2 Skill Profiler is a mod for the video game Payday 2. It adds an interface to
-quickly change a player's skills.
+quickly change a player's skills. You can view some screenshots [here](http://imgur.com/a/CA1hD).
 
 This README covers the installation and usage of this mod.
 
@@ -51,7 +51,7 @@ Using another text editor might make your file unusable by this mod.
 Known bugs and missing features
 ===============================
 
-- Skill dependencies aren't check properly. This means a profile that has Joker but
+- Skill dependencies aren't checked properly. This means a profile that has Joker but
   not Dominator, for example, will pass the safety test but fail to be assigned properly;
 - Cash/skill values on the main menu don't update after changing profile;
 - At the moment, there is no way to ask the users for input (e.g. for the profile name).

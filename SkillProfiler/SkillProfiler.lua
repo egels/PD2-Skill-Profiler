@@ -127,7 +127,7 @@ if not SkillProfiler then
 
       TODO:
         - Check for skill prerequisites
-        - Add full support for pd2skills URLs
+        - Rewrite this mess, using iterators. Will make it easier to maintain/bugfix
     --]]
     -- Check if profile exists
     local profile = self.profiles[profile_name]
