@@ -6,7 +6,7 @@ quickly change a player's skills.
 This README covers the installation and usage of this mod.
 
 **It is strongly recommended to backup your save file before using this mod.**
-This is the first release of this mod, there ~~may~~will be bugs. Follow
+This is the first release of this mod, there ~~may~~ will be bugs. Follow
 [this steam guide](http://steamcommunity.com/sharedfiles/filedetails/?id=170416480)
 to backup your save.
 
