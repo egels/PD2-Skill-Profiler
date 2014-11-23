@@ -6,14 +6,14 @@ quickly change a player's skills.
 This README covers the installation and usage of this mod.
 
 **It is strongly recommended to backup your save file before using this mod.**
-This is the first release of this mod, there may be bugs. Follow
+This is the first release of this mod, there ~~may~~will be bugs. Follow
 [this steam guide](http://steamcommunity.com/sharedfiles/filedetails/?id=170416480)
 to backup your save.
 
 Installation
 ============
 
-1. Click the *Download ZIP* button on the right pannel of this page;
+1. Click the *Download ZIP* button on the right panel of this page;
 2. Extract the content of the zipped file;
 3. Copy the content of `PD2-Skill-Profiler-master` to your Payday 2 folder (typically `C:\Program Files (x86)\Steam\steamapps\common\PAYDAY 2`);
 4. Do not overwrite `PD2hook.yml`. If you are asked to do so, that means you have other mods installed. In this case, merge the content of both files using a text editor.
