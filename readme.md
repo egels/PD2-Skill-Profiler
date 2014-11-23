@@ -51,7 +51,6 @@ Using another text editor might make your file unusable by this mod.
 Known bugs and missing features
 ===============================
 
-- Cash/skill values on the main menu don't update after changing profile;
 - At the moment, there is no way to ask the users for input (e.g. for the profile name).
 
 Special thanks

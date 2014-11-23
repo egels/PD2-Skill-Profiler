@@ -42,6 +42,7 @@ if (not SkillMenu) and CustomMenuClass and SkillProfiler then
       menuoption.textColor = Color.green
       SkillMenu:refreshMenu()
       SkillMenu:openMenu('main', 1)
+      managers.menu_component:refresh_player_profile_gui()
     elseif retval == false then
       local menuoption = SkillMenu:getMenuOption('main', 'infobox')
       menuoption.text = 'Error loading profile: ' .. msg
