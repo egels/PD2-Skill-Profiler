@@ -35,15 +35,16 @@ if (not SkillMenu) and CustomMenuClass and SkillProfiler then
     SkillProfiler:save_to_file()
   end
   function CallbackLoadProfile(name)
-    if SkillProfiler:set_player_skills(name) then
+    local retval, msg = SkillProfiler:set_player_skills(name)
+    if retval == true then
       local menuoption = SkillMenu:getMenuOption('main', 'infobox')
       menuoption.text = 'Profile loaded'
       menuoption.textColor = Color.green
       SkillMenu:refreshMenu()
       SkillMenu:openMenu('main', 1)
-    else
+    elseif retval == false then
       local menuoption = SkillMenu:getMenuOption('main', 'infobox')
-      menuoption.text = 'Error loading profile'
+      menuoption.text = 'Error loading profile: ' .. msg
       menuoption.textColor = Color.red
       SkillMenu:refreshMenu()
       SkillMenu:openMenu('main', 1)

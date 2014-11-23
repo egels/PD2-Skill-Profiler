@@ -125,14 +125,18 @@ if not SkillProfiler then
       Change the player's skills to those specified by a profile. Returns true
       if the profile was loaded successfully, false otherwise.
 
-      TODO:
-        - Check for skill prerequisites
-        - Rewrite this mess, using iterators. Will make it easier to maintain/bugfix
+      Args:
+        profile_name: Profile name to set.
+
+      Returns:
+        A tuple, where the first value is a boolean indicating if the profile
+        was loaded successfully and the second value is a message indicating
+        what went wrong if it didn't.
     --]]
     -- Check if profile exists
     local profile = self.profiles[profile_name]
     if not profile then
-      return false
+      return false, 'Profile doesn\'t exist'
     end
     profile = profile:gsub('.+\/', '')
     local tree_begin = 1
@@ -143,87 +147,53 @@ if not SkillProfiler then
     -- Check if profile is valid and user has enough money
     local total_cost = 0
     local total_skill_points = 0
-    repeat
-      local tree_char = profile:sub(tree_begin,tree_begin)
-      local tree = self:char_to_tree(tree_char)
-      if tree then
-        local tree_skill_points = 1
-        local tree_skills = {}
-        for i=tree_begin+1,tree_end-1 do
-          local char = profile:sub(i,i)
-          tree_skills[string.lower(char)] = char
+    for tree, _, skills_string in self:_iter_tree(profile) do
+      local tree_skill_points = 1
+      local tree_skills = {}
+      for _, skill_tier, skill_index, skill_aced in self:_iter_skills(skills_string) do
+        local tier_unlock_cost = managers.skilltree:tier_cost(tree, skill_tier)
+        local skill_id = tweak_data.skilltree.trees[tree].tiers[skill_tier][skill_index]
+        local prerequisites = tweak_data.skilltree.skills[skill_id]['prerequisites']
+        local prerequisite_ok = not(prerequisites and prerequisites[1] and not tree_skills[prerequisites[1]])
+        if tier_unlock_cost > tree_skill_points or not prerequisite_ok then
+          return false, 'Invalid profile'
+        else
+          tree_skills[skill_id] = true
+          local skill_cost = self:_skill_point_cost(skill_tier, skill_aced)
+          tree_skill_points = tree_skill_points + skill_cost
+          total_cost = total_cost + managers.money:get_skillpoint_cost(tree, skill_tier, skill_cost)
         end
-        for tier, skills in pairs(self.skill_char) do
-          for _, skill in pairs(skills) do
-            if tree_skills[skill] then
-              local tier_unlock_cost = managers.skilltree:tier_cost(tree, tier)
-              if tier_unlock_cost > tree_skill_points then
-                return false
-              else
-                local skill_points_cost = 0
-                if tier < 4 and tree_skills[skill] == string.lower(tree_skills[skill]) then
-                  skill_points_cost = 1
-                elseif tier < 4 and tree_skills[skill] == string.upper(tree_skills[skill]) then
-                  skill_points_cost = 4
-                elseif tier > 3 and tree_skills[skill] == string.lower(tree_skills[skill]) then
-                  skill_points_cost = 4
-                elseif tier > 3 and tree_skills[skill] == string.upper(tree_skills[skill]) then
-                  skill_points_cost = 12
-                end
-                tree_skill_points = tree_skill_points + skill_points_cost
-                total_cost = total_cost + managers.money:get_skillpoint_cost(tree, tier, skill_points_cost)
-              end
-            end
-          end
-        end
-        total_skill_points = total_skill_points + tree_skill_points
       end
-      tree_begin = tree_end + 1
-      tree_end = string.find(profile, ':', tree_begin)
-    until(not tree_end)
+      total_skill_points = total_skill_points + tree_skill_points
+    end
     total_cost = math.round(total_cost)
     local max_skill_points = managers.skilltree:points()
     for tree=1,5 do
       max_skill_points = max_skill_points + managers.skilltree:points_spent(tree)
     end
-    if total_skill_points > max_skill_points or (total_cost+1)/2 > managers.money:total() then
-      -- add 1 to total_cost for comparison to avoid rounding errors
-      return false
+    if total_skill_points > max_skill_points then
+      return false, 'Invalid profile'
+    elseif total_cost > managers.money:total() then
+      -- TODO: redo this calculation properly, accounting for infamy bonuses
+      return false, 'Not enough money'
     end
     -- Assign skills
     managers.skilltree:reset_skilltrees()
-    tree_begin = 1
-    tree_end = string.find(profile, ':', tree_begin)
-    repeat
-      local tree_char = profile:sub(tree_begin,tree_begin)
-      local tree_array = {}
-      for i=tree_begin+1,tree_end-1 do
-        tree_array[#tree_array+1] = profile:sub(i,i)
-      end
-      table.sort(tree_array,
-        function(e1, e2) return string.lower(e1) < string.lower(e2) end)
-      local tree = self:char_to_tree(tree_char)
-      if tree then
-        managers.skilltree:unlock_tree(tree)
-        for _, skill_char in pairs(tree_array) do
-          local char_skill = self:char_to_skill(string.lower(skill_char))
-          if char_skill then
-            local tier = char_skill[1]
-            local skill_index = char_skill[2]
-            local skill_id = tweak_data.skilltree.trees[tree].tiers[tier][skill_index]
-            if skill_char == string.lower(skill_char) then
-              managers.skilltree:unlock(tree, skill_id)
-            elseif skill_char == string.upper(skill_char) then
-              managers.skilltree:unlock(tree, skill_id)
-              managers.skilltree:unlock(tree, skill_id)
-            end
-          end
+    for tree, _, skills_string in self:_iter_tree(profile) do
+      managers.skilltree:unlock_tree(tree)
+      for _, skill_tier, skill_index, skill_aced in self:_iter_skills(skills_string) do
+        local skill_id = tweak_data.skilltree.trees[tree].tiers[skill_tier][skill_index]
+        local skill_cost = self:_skill_point_cost(skill_tier, skill_aced)
+        local money_cost = managers.money:get_skillpoint_cost(tree, skill_tier, skill_cost)
+        managers.money:deduct_from_total(money_cost)
+        if skill_aced then
+          managers.skilltree:unlock(tree, skill_id)
+          managers.skilltree:unlock(tree, skill_id)
+        else
+          managers.skilltree:unlock(tree, skill_id)
         end
       end
-      tree_begin = tree_end + 1
-      tree_end = string.find(profile, ':', tree_begin)
-    until(not tree_end)
-    managers.money:deduct_from_total(total_cost)
+    end
     return true
   end
 
@@ -270,6 +240,101 @@ if not SkillProfiler then
       return true
     else
       return false
+    end
+  end
+
+  function SkillProfiler:_iter_tree(profile)
+    --[[
+    Function to iterate over each skill tree in a profile.
+
+    Args:
+      profile: string describing a profile.
+
+    Yields:
+      A tuple for each skill tree, with the following format:
+      (tree_number, tree_char, skills_string)
+    --]]
+    -- Tests to run:
+    --  1. Valid string
+    --  2. String with a random : added
+    --  3. String ':' (empty profile)
+    local tree_begin = 1
+    local tree_end = string.find(profile, ':', tree_begin)
+    return function()
+      local tree_char = nil
+      local tree = nil
+      local skills_string = nil
+      repeat
+        if not tree_end then
+          return
+        end
+        tree_char = profile:sub(tree_begin,tree_begin)
+        tree = self:char_to_tree(tree_char)
+        skills_string = profile:sub(tree_begin+1, tree_end-1)
+        tree_begin = tree_end + 1
+        tree_end = string.find(profile, ':', tree_begin)
+      until(tree)
+      return tree, tree_char, skills_string
+    end
+  end
+
+  function SkillProfiler:_iter_skills(skills_string)
+    --[[
+    Function to iterate over each skill in a skills string.
+
+    Args:
+      skills_string: String describing the skills, as returned by _iter_tree
+
+    Yields:
+      A tuple for each skill, with the following format:
+      (skill_char, skill_tier, skill_index, (bool)skill_aced)
+    --]]
+    local skill_array = {}
+    for i=1,#skills_string do
+      skill_array[#skill_array+1] = skills_string:sub(i,i)
+    end
+    table.sort(skill_array,
+      function(e1, e2) return string.lower(e1) < string.lower(e2) end)
+    local i=0
+    return function()
+      local skill_char = nil
+      local skill_tier = nil
+      local skill_index = nil
+      local skill_aced = nil
+      while i < #skill_array do
+        i = i+1
+        skill_char = skill_array[i]
+        skill_aced = string.upper(skill_char) == skill_char
+        local retval = self:char_to_skill(string.lower(skill_char))
+        if retval then
+          skill_tier = retval[1]
+          skill_index = retval[2]
+          return skill_char, skill_tier, skill_index, skill_aced
+        end
+      end
+      return
+    end
+  end
+
+  function SkillProfiler:_skill_point_cost(tier, skill_aced)
+    --[[
+      Function to get the skill points cost of a skill.
+
+      Args:
+        tier: Tier of the skill, between 1 and 6.
+        skill_aced: boolean value that indicates whether the skill is aced or not.
+
+      Returns:
+        A number indicating the skill cost. Possiblevalues are 1, 4 and 12.
+    --]]
+    if tier < 4 and not skill_aced then
+      return 1
+    elseif tier < 4 and skill_aced then
+      return 4
+    elseif tier > 3 and not skill_aced then
+      return 4
+    elseif tier > 3 and skill_aced then
+      return 12
     end
   end
 
