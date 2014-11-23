@@ -51,8 +51,6 @@ Using another text editor might make your file unusable by this mod.
 Known bugs and missing features
 ===============================
 
-- Skill dependencies aren't checked properly. This means a profile that has Joker but
-  not Dominator, for example, will pass the safety test but fail to be assigned properly;
 - Cash/skill values on the main menu don't update after changing profile;
 - At the moment, there is no way to ask the users for input (e.g. for the profile name).
 
