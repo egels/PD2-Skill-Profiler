@@ -8,6 +8,7 @@ if not SkillProfiler then
   SkillProfiler.tree_char = {'m', 'e', 't', 'g', 'f'}
   SkillProfiler.skill_char = {{'b','c','d'}, {'e','f','g'}, {'h','i','j'},
                               {'k','l','m'}, {'n','o','p'}, {'q','r','s'}}
+  SkillProfiler.specialization_char = {'c', 'm', 'a', 'r', 'h', 'o'}
 
   function SkillProfiler:load_from_file(filepath)
     --[[
@@ -88,6 +89,7 @@ if not SkillProfiler then
       Add or overwrite a profile with the user's current skills.
     --]]
     local profile = {}
+    -- Add skills
     for tree = 1,5 do
       if managers.skilltree:tree_unlocked(tree) then
         profile[#profile+1] = self.tree_char[tree]
@@ -105,6 +107,13 @@ if not SkillProfiler then
         profile[#profile+1] = ':'
       end
     end
+    -- Add specialization
+    local current_specialization = managers.skilltree:digest_value(managers.skilltree._global.specializations.current_specialization, false)
+    local specialization = self.specialization_char[current_specialization]
+    profile[#profile+1] = 'p'
+    profile[#profile+1] = string.upper(specialization)
+    profile[#profile+1] = ':'
+    -- Add closing character and convert to string
     profile[#profile+1] = ':'
     profile = table.concat(profile)
     self.profiles[name] = profile
@@ -193,6 +202,11 @@ if not SkillProfiler then
           managers.skilltree:unlock(tree, skill_id)
         end
       end
+    end
+    -- Assign specialization
+    local specialization = self:_profile_specialization(profile)
+    if specialization then
+      managers.skilltree:set_current_specialization(specialization)
     end
     return true
   end
@@ -314,6 +328,41 @@ if not SkillProfiler then
       end
       return
     end
+  end
+
+  function SkillProfiler:_profile_specialization(profile)
+    --[[
+      Function to return the specialization of a profile, or nil if there isn't
+      one specified.
+
+      Args:
+        profile: String that describes the skills/specialization of a profile
+    --]]
+    local tree_begin = 1
+    local tree_end = string.find(profile, ':', tree_begin)
+    local tree_char = nil
+    local tree = nil
+    local skills_string = nil
+    local specialization = nil
+    repeat
+      if not tree_end then
+        return
+      end
+      tree_char = profile:sub(tree_begin,tree_begin)
+      tree = self:char_to_tree(tree_char)
+      skills_string = profile:sub(tree_begin+1, tree_end-1)
+      tree_begin = tree_end + 1
+      tree_end = string.find(profile, ':', tree_begin)
+    until(tree_char == 'p')
+    for i=1,#skills_string do
+      local char = skills_string:sub(i,i)
+      for index, deck in pairs(self.specialization_char) do
+        if char == string.upper(deck) then
+          specialization = index
+        end
+      end
+    end
+    return specialization
   end
 
   function SkillProfiler:_skill_point_cost(tier, skill_aced)

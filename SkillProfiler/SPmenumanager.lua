@@ -31,5 +31,4 @@ function MenuCallbackHandler:SkillProfilerCallback()
     if SkillMenu and (not SkillMenu:isOpen()) then
       SkillMenu:open()
     end
-
 end
