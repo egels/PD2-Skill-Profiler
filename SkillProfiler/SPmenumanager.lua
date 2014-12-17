@@ -28,6 +28,7 @@ end
 
 function MenuCallbackHandler:SkillProfilerCallback()
     --Your script or whatever you want to run.
+    SkillProfiler:run_tests()
     if SkillMenu and (not SkillMenu:isOpen()) then
       SkillMenu:open()
     end

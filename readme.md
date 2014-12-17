@@ -6,8 +6,7 @@ quickly change a player's skills. You can view some screenshots [here](http://im
 This README covers the installation and usage of this mod.
 
 **It is strongly recommended to backup your save file before using this mod.**
-This is the first release of this mod, there ~~may~~ will be bugs. Follow
-[this steam guide](http://steamcommunity.com/sharedfiles/filedetails/?id=170416480)
+ Follow [this steam guide](http://steamcommunity.com/sharedfiles/filedetails/?id=170416480)
 to backup your save.
 
 Installation
@@ -16,7 +15,7 @@ Installation
 1. Click the *Download ZIP* button on the right panel of this page;
 2. Extract the content of the zipped file;
 3. Copy the content of `PD2-Skill-Profiler-master` to your Payday 2 folder (typically `C:\Program Files (x86)\Steam\steamapps\common\PAYDAY 2`);
-4. Do not overwrite `PD2hook.yml`. If you are asked to do so, that means you have other mods installed. In this case, merge the content of both files using a text editor.
+4. Do not overwrite `PD2hook.yml`. If you are asked to do so, that means you have other mods installed. In this case, merge the content of both files using a text editor.  [This steam guide](http://steamcommunity.com/sharedfiles/filedetails/?id=352849327) can help you.
 
 After installation is done, a new option should appear in the game's menu under
 "Skills and Perks". Click it to open the Skill Profiler.
@@ -51,6 +50,8 @@ Using another text editor might make your file unusable by this mod.
 Known bugs and missing features
 ===============================
 
+- The skills don't save if the user quits the game after changing his build without entering another menu;
+- There is a potential exploit to get extra spending cash. Don't ask for details you cheater;
 - At the moment, there is no way to ask the users for input (e.g. for the profile name).
 
 Special thanks

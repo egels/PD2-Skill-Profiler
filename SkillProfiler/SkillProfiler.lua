@@ -8,7 +8,7 @@ if not SkillProfiler then
   SkillProfiler.tree_char = {'m', 'e', 't', 'g', 'f'}
   SkillProfiler.skill_char = {{'b','c','d'}, {'e','f','g'}, {'h','i','j'},
                               {'k','l','m'}, {'n','o','p'}, {'q','r','s'}}
-  SkillProfiler.specialization_char = {'c', 'm', 'a', 'r', 'h', 'o'}
+  SkillProfiler.specialization_char = {'c', 'm', 'a', 'r', 'h', 'o', 'b'}
 
   function SkillProfiler:load_from_file(filepath)
     --[[
@@ -153,7 +153,19 @@ if not SkillProfiler then
     if not tree_end then
       return true
     end
-    -- Check if profile is valid and user has enough money
+    -- Get the money refund amount from respecing
+		local player_level = self:_get_player_level()
+    local cost_multiplier = 0
+    if player_level[1] > 0 then
+      cost_multiplier = 0
+    else
+      cost_multiplier = 1 - player_level[2]/100
+    end
+    local respec_refund = 0
+    for tree, _ in pairs(self.tree_char) do
+      respec_refund = respec_refund + managers.money:get_skilltree_tree_respec_cost(tree, cost_multiplier/2)
+    end
+    -- Check if profile is valid
     local total_cost = 0
     local total_skill_points = 0
     for tree, _, skills_string in self:_iter_tree(profile) do
@@ -175,7 +187,7 @@ if not SkillProfiler then
       end
       total_skill_points = total_skill_points + tree_skill_points
     end
-    total_cost = math.round(total_cost)
+    total_cost = math.round(total_cost)*cost_multiplier - respec_refund
     local max_skill_points = managers.skilltree:points()
     for tree=1,5 do
       max_skill_points = max_skill_points + managers.skilltree:points_spent(tree)
@@ -183,18 +195,21 @@ if not SkillProfiler then
     if total_skill_points > max_skill_points then
       return false, 'Invalid profile'
     elseif total_cost > managers.money:total() then
-      -- TODO: redo this calculation properly, accounting for infamy bonuses
       return false, 'Not enough money'
     end
+    -- Reset skills
+    for tree, _ in pairs(self.tree_char) do
+      managers.skilltree:on_respec_tree(tree, cost_multiplier/2)
+    end
     -- Assign skills
-    managers.skilltree:reset_skilltrees()
     for tree, _, skills_string in self:_iter_tree(profile) do
       managers.skilltree:unlock_tree(tree)
       for _, skill_tier, skill_index, skill_aced in self:_iter_skills(skills_string) do
         local skill_id = tweak_data.skilltree.trees[tree].tiers[skill_tier][skill_index]
         local skill_cost = self:_skill_point_cost(skill_tier, skill_aced)
         local money_cost = managers.money:get_skillpoint_cost(tree, skill_tier, skill_cost)
-        managers.money:deduct_from_total(money_cost)
+        local skill_refund = money_cost*(1-cost_multiplier)
+        managers.money:_add_to_total(skill_refund, {no_offshore = true})
         if skill_aced then
           managers.skilltree:unlock(tree, skill_id)
           managers.skilltree:unlock(tree, skill_id)
@@ -387,11 +402,28 @@ if not SkillProfiler then
     end
   end
 
+  function SkillProfiler:_get_player_level()
+    --[[
+      Get the player's current level and infamy level.
+
+      Returns:
+        A table with the format {infamy_level, player_level}
+    --]]
+    local infamy_level = managers.infamy:points()
+    for _, item_name in pairs(tweak_data.infamy.tree) do
+      if managers.infamy:owned(item_name) then
+        infamy_level = infamy_level + 1
+      end
+    end
+    local player_level = managers.experience:current_level()
+    return {infamy_level, player_level}
+  end
+
   function SkillProfiler:run_tests()
     --[[
       Function used in development to test certain features before moving them
       to their appropriate place.
     --]]
-    return -- All done!
+    return -- All done
   end
 end

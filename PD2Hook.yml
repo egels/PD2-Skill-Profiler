@@ -16,6 +16,3 @@ PostRequireScripts:
   # Skill Profiler
   - [lib/managers/menumanager, SkillProfiler/SPmenumanager.lua]
   - [lib/managers/localizationmanager, SkillProfiler/SPlocalizationmanager.lua]
-
-# CloseScripts:
-#   - LUA\statesaver.lua
