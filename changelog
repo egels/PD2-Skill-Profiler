@@ -2,3 +2,5 @@
   - Added support for the infiltrator perk deck;
   - Updated to a newer version of the lua API;
   - Removed PD2Hook.yml.
+2015-02-05:
+  - Fixed display text for the menu entry.

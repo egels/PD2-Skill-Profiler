@@ -13,6 +13,6 @@ if not GetPersistScript('SkillMenu') then
   AddPersistScript('SkillMenu', 'lib/Lua/SkillProfiler/SkillMenu.lua')
 end
 RegisterScript('lib/Lua/SkillProfiler/SPlocalizationmanager.lua',
-               2, 'lib/managers/localizationmanager.lua')
+               2, 'lib/managers/localizationmanager')
 RegisterScript('lib/Lua/SkillProfiler/SPmenumanager.lua',
                2, 'lib/managers/menumanager')
