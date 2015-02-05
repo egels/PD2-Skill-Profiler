@@ -1,0 +1,9 @@
+Changes:
+  Add support for the new perk deck;
+  Fix code to be compatible with update 49;
+  Fix money calculations to be more accurate;
+  Change cost depending on player level. At level 0, full price. At level 100 or above (infamous), free.
+    - Reasoning: Payday 2's skill profiles unlock based on the player's level. The last unlock is at level 100 and is kept after going infamous.
+
+New known bug:
+  The skills don't save if the user quits the game after changing his build without entering another menu.

@@ -15,7 +15,6 @@ Installation
 1. Click the *Download ZIP* button on the right panel of this page;
 2. Extract the content of the zipped file;
 3. Copy the content of `PD2-Skill-Profiler-master` to your Payday 2 folder (typically `C:\Program Files (x86)\Steam\steamapps\common\PAYDAY 2`);
-4. Do not overwrite `PD2hook.yml`. If you are asked to do so, that means you have other mods installed. In this case, merge the content of both files using a text editor.  [This steam guide](http://steamcommunity.com/sharedfiles/filedetails/?id=352849327) can help you.
 
 After installation is done, a new option should appear in the game's menu under
 "Skills and Perks". Click it to open the Skill Profiler.

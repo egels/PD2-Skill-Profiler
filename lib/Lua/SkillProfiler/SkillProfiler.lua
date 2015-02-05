@@ -8,7 +8,7 @@ if not SkillProfiler then
   SkillProfiler.tree_char = {'m', 'e', 't', 'g', 'f'}
   SkillProfiler.skill_char = {{'b','c','d'}, {'e','f','g'}, {'h','i','j'},
                               {'k','l','m'}, {'n','o','p'}, {'q','r','s'}}
-  SkillProfiler.specialization_char = {'c', 'm', 'a', 'r', 'h', 'o', 'b'}
+  SkillProfiler.specialization_char = {'c', 'm', 'a', 'r', 'h', 'o', 'b', 'i'}
 
   function SkillProfiler:load_from_file(filepath)
     --[[
